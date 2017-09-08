@@ -149,10 +149,59 @@ $Txt_ServiceName = $window.FindName("txt_ServiceName")
 #endregion
 
 #region Custom Functions
+Function Get-ServiceList {
+[cmdletbinding()]
+param(
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+$ComputerName,
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+[string]$ServiceName
+
+)
+
+$f_ServiceList = Get-Service -Name $ServiceName -ComputerName $ComputerName -Verbose | Select-Object -Property Name,Status,MachineName,DisplayName,StartType -Verbose
+return $f_ServiceList
+
+}
+
+Function Start-ServiceList {
+[cmdletbinding()]
+param(
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+$ComputerName,
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+[string]$ServiceName
+
+)
+
+$f_ServiceList = Get-ServiceList -ComputerName $ComputerName -ServiceName $ServiceName -Verbose | Start-Service -Verbose
+return $f_ServiceList
+
+}
 
 
 
+Function Stop-ServiceList {
+[cmdletbinding()]
+param(
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+$ComputerName,
+[Parameter(Mandatory = $true)]
+[ValidateNotNullOrEmpty()]
+[string]$ServiceName
 
+)
+
+$f_ServiceList = Get-ServiceList -ComputerName $ComputerName -ServiceName $ServiceName -Verbose | Stop-Service -Verbose
+return $f_ServiceList
+Write-Verbose -Message "$ServiceName has been successfully stopped on host: $ComputerName "
+
+}
 #endregion
 
 #GLOBAL
